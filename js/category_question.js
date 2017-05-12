@@ -63,9 +63,12 @@ function displayquestions(selected_category) {
 };
 
 
-jQuery(function($) {
-
-    displayquestions($("#category .active").attr('id'));
+$(document).ready(function(){ 
+    
+    setTimeout(function(){ 
+      displayquestions($("#category .active").attr('id'));
+     },
+  1000);
 
     $("#category li").on("click", function () {
         $("#category li").removeClass("active");
