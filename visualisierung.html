@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Visualisierung</title>
+
+    <link rel="stylesheet" href="css/barchart.css" type="text/css">
+
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+
+    <!--Bootstrap-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+</head>
+
+<body>
+    <div style="max-width: 1200px; margin: 0 auto; padding: 10px;">
+
+        <div class="jumbotron" style="padding:10px;">
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Fragekategorien <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" id="category"></ul>
+            </div>
+
+
+            <div class="list-group" style="padding-top:20px;" id="questions"></div>
+
+        </div>
+
+        <form>
+            <label><input id="check" type="radio" name="mode" value="bypercent" checked> Prozent</label>
+            <label><input type="radio" name="mode" value="bycount"> Anzahl Antworten</label>
+        </form>
+
+
+    </div>
+
+
+    <div id="chart"></div>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- BOOTSTRAP -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+    <!-- SCRIPTS -->
+    <script src="js/category_question.js"></script> <!-- Kategorien & Fragen -->
+    <script src="js/bar_visualization.js"></script> <!-- Visualisierung -->
+
+
+</body>
+
+</html>

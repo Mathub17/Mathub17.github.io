@@ -1,0 +1,46 @@
+[
+    {
+        "category": 1,
+        "category_text": "Sozialstaat & Familie"
+    },
+    {
+        "category": 4,
+        "category_text": "Migration & Integration"
+    },
+    {
+        "category": 5,
+        "category_text": "Gesellschaft & Ethik"
+    },
+    {
+        "category": 6,
+        "category_text": "Finanzen & Steuern"
+    },
+    {
+        "category": 7,
+        "category_text": "Wirtschaft & Arbeit"
+    },
+    {
+        "category": 15,
+        "category_text": "Justiz & Polizei"
+    },
+    {
+        "category": 29,
+        "category_text": "Stadtbudget"
+    },
+    {
+        "category": 35,
+        "category_text": "Energie"
+    },
+    {
+        "category": 36,
+        "category_text": "Umwelt & Verkehr"
+    },
+    {
+        "category": 39,
+        "category_text": "Bildung & Kultur"
+    },
+    {
+        "category": 41,
+        "category_text": "Stadtentwicklung & politisches System"
+    }
+        ]
