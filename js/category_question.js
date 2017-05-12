@@ -63,7 +63,7 @@ function displayquestions(selected_category) {
 };
 
 
-$(document).ready(function () {
+jQuery(function($) {
 
     displayquestions($("#category .active").attr('id'));
 
