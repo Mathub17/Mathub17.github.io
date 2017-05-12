@@ -6,13 +6,14 @@ d3.json("data/Kategorien.json", function (data) {
         .data(data)
         .enter()
         .append("li")
+        .attr("id", function (d) {
+            return d.category;
+        })
         .each(function (d, i) {
             if (i === 0) {
                 d3.select(this).attr("class", "active");
+                displayquestions(d3.select(this).attr("id"));
             }
-        })
-        .attr("id", function (d) {
-            return d.category;
         })
         .append("a")
         .attr("href", "#")
@@ -63,12 +64,7 @@ function displayquestions(selected_category) {
 };
 
 
-$(document).ready(function(){ 
-    
-    setTimeout(function(){ 
-      displayquestions($("#category .active").attr('id'));
-     },
-  1000);
+jQuery(function ($) {
 
     $("#category li").on("click", function () {
         $("#category li").removeClass("active");
