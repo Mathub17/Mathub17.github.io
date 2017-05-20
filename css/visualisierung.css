@@ -8,12 +8,18 @@
     font-weight: 600;
 }
 
-#menu {
+#questions {
     padding-top: 10px;
+    cursor: pointer;
 }
 
 .sort {
     cursor: pointer;
+}
+
+#selected_category {
+    padding-left: 15px;
+    color: darkslategrey;
 }
 
 /*Barchart*/

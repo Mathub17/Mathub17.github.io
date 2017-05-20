@@ -13,8 +13,6 @@ d3.json("data/Kategorien.json", function (data) {
         .each(function (d, i) {
             if (i === 0) {
                 d3.select(this).attr("class", "active");
-                d3.select("#fragetitel").text("Fragen (Kategorie: " + d.category_text + ")");
-                d3.select("#fragetitel").append("span").attr("class", "glyphicon glyphicon-question-sign pull-right");
                 displayquestions(d3.select(this).attr("id"));
             }
         })
@@ -23,6 +21,9 @@ d3.json("data/Kategorien.json", function (data) {
         .text(function (d) {
             return d.category_text
         });
+
+    d3.select('#selected_category').html(data[0].category_text);
+
 });
 
 // Fragen zur selektierten Kategorie laden
@@ -44,11 +45,10 @@ function displayquestions(selected_category) {
 
         var questions = d3.select("#questions")
 
-        questions.selectAll("a")
+        questions.selectAll("li")
             .data(selected_questions)
             .enter()
-            .append("a")
-            .attr("href", "#")
+            .append("li")
             .attr("class", "list-group-item small")
             .attr("id", function (d) {
                 return d.ID_question;
@@ -109,7 +109,7 @@ function load_barchart(tmp) {
 
     // Daten laden
     d3.json("data/Kandidaten.json", function (error1, data) {
-        d3.json("data/Waehlerstaerke.json", function (error2, waehlerstaerke) {
+        d3.json("data/Sitze.json", function (error2, sitze) {
 
 
             // Transformation der Daten für Visualisierung
@@ -190,8 +190,9 @@ function load_barchart(tmp) {
                 var colors = d3.scale.ordinal()
                     .range(["#f44f4f", "#e29988", "#cbc8bf", "#7698e3", "#3f52e0"]);
 
-                d3.select("#sort3").text("Deutlich weniger")
-                d3.select("#sort4").text("Deutlich mehr")
+                d3.select("#sort4").text("Deutlich weniger")
+                d3.select("#sort5").text("Deutlich mehr")
+
 
             } else {
 
@@ -206,8 +207,8 @@ function load_barchart(tmp) {
                 var colors = d3.scale.ordinal()
                     .range(["#f44f4f", "#e29988", "#7698e3", "#3f52e0"]);
 
-                d3.select("#sort3").text("Nein")
-                d3.select("#sort4").text("Ja")
+                d3.select("#sort4").text("Nein")
+                d3.select("#sort5").text("Ja")
             };
 
 
@@ -265,18 +266,32 @@ function load_barchart(tmp) {
 
             // Wahlstärken-Parameter hinzufügen
             parsedata.forEach(function (pd) {
-                for (var x = 0; x < waehlerstaerke.length; x++) {
-                    if (waehlerstaerke[x].party_short == pd.Absolutes) {
-                        pd.prozent = waehlerstaerke[x].prozent;
+                for (var x = 0; x < sitze.length; x++) {
+                    if (sitze[x].party_short == pd.Absolutes) {
+                        pd.sitze = sitze[x].sitze;
                     }
                 }
             });
+
+            // Durchschnitt berechnen
+            if (!budgetfrage) {
+
+                for (var x = 0; x < parsedata.length; x++) {
+                    parsedata[x].durchschnitt = ((parsedata[x]["Eher Nein"] * 25 + parsedata[x]["Eher Ja"] * 75 + parsedata[x]["Ja"] * 100) / parsedata[x]["totalresponses"]);
+                }
+
+            } else {
+                for (var x = 0; x < parsedata.length; x++) {
+                    parsedata[x].durchschnitt = ((parsedata[x]["Weniger"] * 25 + parsedata[x]["Gleich viel"] * 50 + parsedata[x]["Mehr"] * 75 + parsedata[x]["Deutlich mehr"] * 100) / parsedata[x]["totalresponses"]);
+                }
+            }
+
 
             // Sortierung nach ausgewähltem Parameter
             // Wähleranteil
             if (d3.select("#sort1").attr("class") == "sort label label-primary") {
                 parsedata.sort(function (a, b) {
-                    return b.prozent - a.prozent;
+                    return b.sitze - a.sitze || (b["Base: All Respondents"] - a["Base: All Respondents"]);
                 })
             }
             // Anzahl Antworten
@@ -285,17 +300,23 @@ function load_barchart(tmp) {
                     return (b["Base: All Respondents"] - a["Base: All Respondents"]);
                 })
             }
-            // Nein resp deutlich weniger
+            // Durchscnitt
             else if (d3.select("#sort3").attr("class") == "sort label label-primary") {
+                parsedata.sort(function (a, b) {
+                    return b.durchschnitt - a.durchschnitt;
+                })
+            }
+            // Nein resp deutlich weniger
+            else if (d3.select("#sort4").attr("class") == "sort label label-primary") {
                 parsedata.sort(function (a, b) {
                     return (b.responses[0].yp1 - a.responses[0].yp1) || ((b.responses[1].yp1 - b.responses[1].yp0) - (a.responses[1].yp1 - a.responses[1].yp0)) || ((b.responses[2].yp1 - b.responses[2].yp0) - (a.responses[2].yp1 - a.responses[2].yp0)) || ((b.responses[3].yp1 - b.responses[3].yp0) - (a.responses[3].yp1 - a.responses[3].yp0));
                 })
             }
             // Ja resp deutlich mehr
-            else if (d3.select("#sort4").attr("class") == "sort label label-primary") {
+            else if (d3.select("#sort5").attr("class") == "sort label label-primary") {
                 if (!budgetfrage) {
                     parsedata.sort(function (a, b) {
-                        return ((b.responses[3].yp1 - b.responses[3].yp0) - (a.responses[3].yp1 - a.responses[3].yp0)) || ((b.responses[2].yp1 - b.responses[2].yp0) - (a.responses[2].yp1 - a.responses[2].yp0)) ||((b.responses[1].yp1 - b.responses[1].yp0) - (a.responses[1].yp1 - a.responses[1].yp0));
+                        return ((b.responses[3].yp1 - b.responses[3].yp0) - (a.responses[3].yp1 - a.responses[3].yp0)) || ((b.responses[2].yp1 - b.responses[2].yp0) - (a.responses[2].yp1 - a.responses[2].yp0)) || ((b.responses[1].yp1 - b.responses[1].yp0) - (a.responses[1].yp1 - a.responses[1].yp0));
                     })
                 } else {
                     parsedata.sort(function (a, b) {
@@ -467,23 +488,28 @@ function load_barchart(tmp) {
                                 // Wähleranteil
                                 case "sort1":
                                     return parsedata.sort(function (a, b) {
-                                        return b.prozent - a.prozent;
+                                        return b.sitze - a.sitze || (b["Base: All Respondents"] - a["Base: All Respondents"]);
                                     })
                                     // Anzahl Antworten
                                 case "sort2":
                                     return parsedata.sort(function (a, b) {
                                         return (b["Base: All Respondents"] - a["Base: All Respondents"]);
                                     })
-                                    // Nein resp deutlich weniger
+                                    // Durchschnitt
                                 case "sort3":
+                                    return parsedata.sort(function (a, b) {
+                                        return b.durchschnitt - a.durchschnitt;
+                                    })
+                                    // Nein resp deutlich weniger
+                                case "sort4":
                                     return parsedata.sort(function (a, b) {
                                         return (b.responses[0].yp1 - a.responses[0].yp1) || ((b.responses[1].yp1 - b.responses[1].yp0) - (a.responses[1].yp1 - a.responses[1].yp0)) || ((b.responses[2].yp1 - b.responses[2].yp0) - (a.responses[2].yp1 - a.responses[2].yp0)) || ((b.responses[3].yp1 - b.responses[3].yp0) - (a.responses[3].yp1 - a.responses[3].yp0));
                                     })
                                     // Ja resp deutlich mehr
-                                case "sort4":
+                                case "sort5":
                                     if (!budgetfrage) {
                                         return parsedata.sort(function (a, b) {
-                                            return ((b.responses[3].yp1 - b.responses[3].yp0) - (a.responses[3].yp1 - a.responses[3].yp0)) || ((b.responses[2].yp1 - b.responses[2].yp0) - (a.responses[2].yp1 - a.responses[2].yp0)) ||((b.responses[1].yp1 - b.responses[1].yp0) - (a.responses[1].yp1 - a.responses[1].yp0));
+                                            return ((b.responses[3].yp1 - b.responses[3].yp0) - (a.responses[3].yp1 - a.responses[3].yp0)) || ((b.responses[2].yp1 - b.responses[2].yp0) - (a.responses[2].yp1 - a.responses[2].yp0)) || ((b.responses[1].yp1 - b.responses[1].yp0) - (a.responses[1].yp1 - a.responses[1].yp0));
                                         })
                                     } else {
                                         return parsedata.sort(function (a, b) {
@@ -537,18 +563,16 @@ jQuery(function ($) {
     $("#category li").on("click", function () {
         $("#category li").removeClass("active");
         $(this).addClass("active");
-        $("#fragetitel").text("Fragen (Kategorie: " + $("#category .active").text() + ")");
-        $("#fragetitel").append("<span class = 'glyphicon glyphicon-question-sign pull-right'></span>");
         $("#chart").empty();
         $("#questions").empty();
         $('#check').prop('checked', true);
         $('#radio').prop('checked', false);
+        $('#selected_category').html($(this).text())
         displayquestions($("#category .active").attr('id'));
     });
 
-    $("#questions").on("click", "a", function () {
-        $("#questions").attr("class", "sublinks collapse");
-        $("#questions a").attr("class", "list-group-item small");
+    $("#questions").on("click", "li", function () {
+        $("#questions li").attr("class", "list-group-item small");
         $(this).attr("class", "list-group-item small active");
         $("#chart").empty();
         $('#check').prop('checked', true);
