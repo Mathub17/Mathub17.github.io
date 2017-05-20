@@ -8,54 +8,63 @@
 
     <title>Visualisierung</title>
 
-    <link rel="stylesheet" href="css/barchart.css" type="text/css">
-    
     <!-- jQuery -->
-    <script src="js/jquery-3.2.1.min.js"></script>
-    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
     <!-- d3_v3 -->
-    <script src="js/d3.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
 
     <!--Bootstrap-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="css/visualisierung.css" type="text/css">
 
 </head>
 
 <body>
     <div style="max-width: 1200px; margin: 0 auto; padding: 10px;">
 
-        <div class="jumbotron" style="padding:10px;">
+        <div class="jumbotron">
 
             <div class="btn-group">
-                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                     Fragekategorien <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" id="category"></ul>
             </div>
 
+            <div id="menu">
+                <div class="panel list-group">
+                    <a href="#" class="list-group-item" data-toggle="collapse" data-target="#questions" data-parent="#menu" id="fragetitel"></a>
+                    <div id="questions" class="sublinks collapse">
+                    </div>
 
-            <div class="list-group" style="padding-top:20px;" id="questions"></div>
+                </div>
+            </div>
+
+            Sortieren nach:
+            <span class="sort label label-primary" id="sort1">Wähleranteil</span>
+            <span class="sort label label-default" id="sort2">Anzahl Antworten</span>
+            <span class="sort label label-default" id="sort3"></span>
+            <span class="sort label label-default" id="sort4"></span>
+
+
 
         </div>
 
-        <form>
-            <label><input id="check" type="radio" name="mode" value="bypercent" checked> Prozent</label>
-            <label><input type="radio" name="mode" value="bycount"> Anzahl Antworten</label>
-        </form>
-
-
     </div>
 
+    <form>
+        <label><input id="check" type="radio" name="mode" value="bypercent" checked> Prozent</label>
+        <label><input type="radio" name="mode" value="bycount"> Anzahl Antworten</label>
+    </form>
 
     <div id="chart"></div>
 
-    <!-- BOOTSTRAP -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-
 
     <!-- SCRIPTS -->
-    <script src="js/category_question.js"></script> <!-- Kategorien & Fragen -->
-    <script src="js/bar_visualization.js"></script> <!-- Visualisierung -->
+    <script src="js/visualisierung.js"></script>
 
 
 </body>
