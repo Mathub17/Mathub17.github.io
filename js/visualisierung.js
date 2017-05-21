@@ -560,9 +560,9 @@ function load_barchart(tmp) {
 
 jQuery(function ($) {
 
-    $("#category li").on("click", function () {
+    $("#category").on("click", "a", function () {
         $("#category li").removeClass("active");
-        $(this).addClass("active");
+        $(this).parent('li').addClass("active");
         $("#chart").empty();
         $("#questions").empty();
         $('#check').prop('checked', true);
