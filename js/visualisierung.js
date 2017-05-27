@@ -1,3 +1,5 @@
+var slider_loaded = false;
+
 //Kategorien laden
 d3.json("data/Kategorien.json", function (data) {
 
@@ -78,7 +80,6 @@ function load_barchart(tmp) {
         left: 50
     }
 
-
     var width = 700 - margin.left - margin.right,
         height = 600 - margin.top - margin.bottom;
 
@@ -111,9 +112,37 @@ function load_barchart(tmp) {
     d3.json("data/Kandidaten.json", function (error1, data) {
         d3.json("data/Sitze.json", function (error2, sitze) {
 
+            // Min & Max Alter in Data
+            var min_age = Number.POSITIVE_INFINITY;
+            var max_age = Number.NEGATIVE_INFINITY;
+            var haha;
+            for (var x = 0; x < data.length; x++) {
+                haha = new Date().getFullYear() - data[x].year_of_birth;
+                if (haha < min_age) {
+                    min_age = haha
+                };
+                if (haha > max_age) {
+                    max_age = haha
+                };
+            }
+
+            d3.select("#slider")
+                .attr("data-slider-min", min_age)
+                .attr("data-slider-max", max_age)
+                .attr("data-slider-value", "[" + min_age + "," + max_age + "]");
+
+            // Nur bei intitialem laden der Seite
+            if (!slider_loaded) {
+                var slider = new Slider('#slider', {
+                    tooltip: 'hide'
+                });
+                slider_loaded = true;
+                // Alter zu Slider hinzufügen
+                d3.select("#min_age").text(min_age);
+                d3.select("#max_age").text(max_age);
+            }
 
             // Transformation der Daten für Visualisierung
-
             var input = [];
             var budgetfrage = false;
 
@@ -131,6 +160,53 @@ function load_barchart(tmp) {
                 "Absolutes": 100
             })
 
+            // Männer resp. Frauen aus data löschen
+            if (d3.select("#m").attr("class") == "btn btn-primary btn-xs") {
+                var lng = data.length - 1;
+                while (lng >= 0) {
+                    if (data[lng].gender != "m") {
+                        data.splice(lng, 1);
+                    }
+                    lng--;
+                }
+            } else if (d3.select("#f").attr("class") == "btn btn-primary btn-xs") {
+                var lng = data.length - 1;
+                while (lng >= 0) {
+                    if (data[lng].gender != "f") {
+                        data.splice(lng, 1);
+                    }
+                    lng--;
+                }
+            }
+
+            // Gewählt resp. nicht gewählt?
+            if (d3.select("#elected_true").attr("class") == "btn btn-primary btn-xs") {
+                var lng = data.length - 1;
+                while (lng >= 0) {
+                    if (!data[lng].elected) {
+                        data.splice(lng, 1);
+                    }
+                    lng--;
+                }
+            } else if (d3.select("#elected_false").attr("class") == "btn btn-primary btn-xs") {
+                var lng = data.length - 1;
+                while (lng >= 0) {
+                    if (data[lng].elected) {
+                        data.splice(lng, 1);
+                    }
+                    lng--;
+                }
+            }
+            
+            // nicht in ausgewählter Alters-Range?
+            var lng = data.length - 1;
+            while (lng >= 0) {
+                var candidate_age = new Date().getFullYear() - data[lng].year_of_birth;
+                if (candidate_age > d3.select("#max_age").text() || candidate_age < d3.select("#min_age").text()) {
+                    data.splice(lng, 1);
+                }
+                lng--;
+            }
 
             for (var a = 0; a < data.length; a++) {
 
@@ -188,7 +264,7 @@ function load_barchart(tmp) {
                 input[5].Absolutes = "Deutlich mehr";
 
                 var colors = d3.scale.ordinal()
-                    .range(["#f44f4f", "#e29988", "#cbc8bf", "#7698e3", "#3f52e0"]);
+                    .range(["#f71616", "#fc6464", "#cbc8bf", "#5a6cf4", "#1831f0"]);
 
                 d3.select("#sort4").text("Deutlich weniger")
                 d3.select("#sort5").text("Deutlich mehr")
@@ -205,7 +281,7 @@ function load_barchart(tmp) {
 
 
                 var colors = d3.scale.ordinal()
-                    .range(["#f44f4f", "#e29988", "#7698e3", "#3f52e0"]);
+                    .range(["#f71616", "#fc6464", "#5a6cf4", "#1831f0"]);
 
                 d3.select("#sort4").text("Nein")
                 d3.select("#sort5").text("Ja")
@@ -289,31 +365,31 @@ function load_barchart(tmp) {
 
             // Sortierung nach ausgewähltem Parameter
             // Wähleranteil
-            if (d3.select("#sort1").attr("class") == "sort label label-primary") {
+            if (d3.select("#sort1").attr("class") == "sort btn btn-primary btn-xs") {
                 parsedata.sort(function (a, b) {
-                    return b.sitze - a.sitze || (b["Base: All Respondents"] - a["Base: All Respondents"]);
+                    return (b.sitze - a.sitze) || (b["Base: All Respondents"] - a["Base: All Respondents"]);
                 })
             }
             // Anzahl Antworten
-            else if (d3.select("#sort2").attr("class") == "sort label label-primary") {
+            else if (d3.select("#sort2").attr("class") == "sort btn btn-primary btn-xs") {
                 parsedata.sort(function (a, b) {
                     return (b["Base: All Respondents"] - a["Base: All Respondents"]);
                 })
             }
             // Durchscnitt
-            else if (d3.select("#sort3").attr("class") == "sort label label-primary") {
+            else if (d3.select("#sort3").attr("class") == "sort btn btn-primary btn-xs") {
                 parsedata.sort(function (a, b) {
                     return b.durchschnitt - a.durchschnitt;
                 })
             }
             // Nein resp deutlich weniger
-            else if (d3.select("#sort4").attr("class") == "sort label label-primary") {
+            else if (d3.select("#sort4").attr("class") == "sort btn btn-primary btn-xs") {
                 parsedata.sort(function (a, b) {
                     return (b.responses[0].yp1 - a.responses[0].yp1) || ((b.responses[1].yp1 - b.responses[1].yp0) - (a.responses[1].yp1 - a.responses[1].yp0)) || ((b.responses[2].yp1 - b.responses[2].yp0) - (a.responses[2].yp1 - a.responses[2].yp0)) || ((b.responses[3].yp1 - b.responses[3].yp0) - (a.responses[3].yp1 - a.responses[3].yp0));
                 })
             }
             // Ja resp deutlich mehr
-            else if (d3.select("#sort5").attr("class") == "sort label label-primary") {
+            else if (d3.select("#sort5").attr("class") == "sort btn btn-primary btn-xs") {
                 if (!budgetfrage) {
                     parsedata.sort(function (a, b) {
                         return ((b.responses[3].yp1 - b.responses[3].yp0) - (a.responses[3].yp1 - a.responses[3].yp0)) || ((b.responses[2].yp1 - b.responses[2].yp0) - (a.responses[2].yp1 - a.responses[2].yp0)) || ((b.responses[1].yp1 - b.responses[1].yp0) - (a.responses[1].yp1 - a.responses[1].yp0));
@@ -473,11 +549,10 @@ function load_barchart(tmp) {
 
             // Sortierreihenfolge ändern
             d3.selectAll(".sort").on("click", handleSort);
-            console.log(parsedata)
 
             function handleSort() {
-                d3.selectAll(".sort").attr("class", "sort label label-default");
-                d3.select(this).attr("class", "sort label label-primary");
+                d3.selectAll(".sort").attr("class", "sort btn btn-default btn-xs");
+                d3.select(this).attr("class", "sort btn btn-primary btn-xs");
 
                 // Nach gewähltem Parameter sortieren
                 // Ansatz von: https://bl.ocks.org/mbostock/3885705
@@ -488,7 +563,7 @@ function load_barchart(tmp) {
                                 // Wähleranteil
                                 case "sort1":
                                     return parsedata.sort(function (a, b) {
-                                        return b.sitze - a.sitze || (b["Base: All Respondents"] - a["Base: All Respondents"]);
+                                        return (b.sitze - a.sitze) || (b["Base: All Respondents"] - a["Base: All Respondents"]);
                                     })
                                     // Anzahl Antworten
                                 case "sort2":
@@ -577,8 +652,36 @@ jQuery(function ($) {
         $("#chart").empty();
         $('#check').prop('checked', true);
         $('#radio').prop('checked', false);
-        load_barchart($(this).attr("id"))
+        load_barchart($(this).attr("id"));
     });
+
+    $("#gender").on("click", "button", function () {
+        $("#gender button").attr("class", "btn btn-default btn-xs");
+        $(this).attr("class", "btn btn-primary btn-xs");
+        $("#chart").empty();
+        $('#check').prop('checked', true);
+        $('#radio').prop('checked', false);
+        load_barchart($("#questions .active").attr('id'))
+    });
+
+    $("#elected").on("click", "button", function () {
+        $("#elected button").attr("class", "btn btn-default btn-xs");
+        $(this).attr("class", "btn btn-primary btn-xs");
+        $("#chart").empty();
+        $('#check').prop('checked', true);
+        $('#radio').prop('checked', false);
+        load_barchart($("#questions .active").attr('id'))
+    });
+
+    $(document).on("mouseup", ".slider-handle", function () {
+        $("#max_age").text(Math.max($(".max-slider-handle").attr("aria-valuenow")));
+        $("#min_age").text(Math.max($(".min-slider-handle").attr("aria-valuenow")));
+        $("#chart").empty();
+        $('#check').prop('checked', true);
+        $('#radio').prop('checked', false);
+        load_barchart($("#questions .active").attr('id'))
+    })
+
 
 
 });

@@ -13,8 +13,12 @@
 
 
     <script>
-        d3.json("data/Waehlerstaerke.json", function(temp) {
-            console.log(temp)
+        d3.json("data/Kandidaten.json", function(temp) {
+            
+            for (var x = 0; x <temp.length; x++) {
+                document.write(x + " " + temp[x].year_of_birth + "<br>");
+            }
+            
         })
 
     </script>

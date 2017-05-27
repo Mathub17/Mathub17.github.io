@@ -22,10 +22,30 @@
     color: darkslategrey;
 }
 
+.declaration {
+    color: darkslategrey;
+    margin-right: 15px;
+    font-style: oblique;
+}
+
+.age {
+    color: darkslategrey;
+    font-style: oblique;
+    margin: 13px;
+}
+
+.slider-selection {
+    background: #d9d8d8;
+}
+
 /*Barchart*/
 rect.bordered {
     stroke: #E6E6E6;
     stroke-width: 2px;
+}
+
+.btn-group {
+    margin-right: 10px;
 }
 
 #chart {
