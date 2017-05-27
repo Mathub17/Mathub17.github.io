@@ -74,14 +74,14 @@ function load_barchart(tmp) {
     // Ansatz: http://bl.ocks.org/tmaybe/6144082
 
     var margin = {
-        top: 20,
-        right: 120,
-        bottom: 50,
+        top: 10,
+        right: 40,
+        bottom: 65,
         left: 50
     }
 
-    var width = 700 - margin.left - margin.right,
-        height = 600 - margin.top - margin.bottom;
+    var width = Math.min(window.innerWidth, 700) - margin.left - margin.right,
+        height = Math.min(window.innerWidth, 600) - margin.top - margin.bottom;
 
     var xscale = d3.scale.ordinal()
         .rangeRoundBands([0, width], .1);
@@ -98,12 +98,17 @@ function load_barchart(tmp) {
         .orient("left")
         .tickFormat(d3.format(".0%")); // **
 
+    var svglegend = d3.select("#chart").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", 40)
+        .append("g")
+        .attr("transform", "translate(10, 20)");
+
     var svg = d3.select("#chart").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
 
     var frageID = tmp;
 
@@ -197,7 +202,7 @@ function load_barchart(tmp) {
                     lng--;
                 }
             }
-            
+
             // nicht in ausgewählter Alters-Range?
             var lng = data.length - 1;
             while (lng >= 0) {
@@ -401,7 +406,6 @@ function load_barchart(tmp) {
                 }
             }
 
-
             // ordinal-ly map categories to x positions
             xscale.domain(parsedata.map(function (d) {
                 return d.Absolutes;
@@ -451,27 +455,48 @@ function load_barchart(tmp) {
                 });
 
             // position the legend elements
-            var legend = svg.selectAll(".legend")
+            var legend = svglegend.selectAll(".legend")
                 .data(colors.domain())
                 .enter().append("g")
-                .attr("class", "legend")
-                .attr("transform", function (d, i) {
-                    return "translate(20," + ((height - 18) - (i * 20)) + ")";
-                });
+                .attr("class", "legend");
 
             legend.append("rect")
-                .attr("x", width - 18)
                 .attr("width", 18)
                 .attr("height", 18)
+                .attr("class", "tralala")
                 .style("fill", colors);
 
             legend.append("text")
-                .attr("x", width + 10)
                 .attr("y", 9)
                 .attr("dy", ".35em")
                 .style("text-anchor", "start")
+                .attr("transform", "translate(23,0)")
+                .attr("id", function (d, i) {
+                    return "text " + i;
+                })
                 .text(function (d) {
                     return d;
+                });
+
+            var x_pos = 0;
+            var distance = 32;
+
+            // Legende: Rects nach textlänge neu positionieren
+            svglegend.selectAll("rect")
+                .attr("x", function (d, i) {
+                    var rect_pos = x_pos;
+                    x_pos = x_pos + document.getElementById("text " + i).getBBox().width + distance;
+                    return rect_pos;
+                });
+
+            x_pos = 0;
+
+            // Legende: Text nach textlänge neu positionieren
+            svglegend.selectAll("text")
+                .attr("x", function (d, i) {
+                    var text_pos = x_pos;
+                    x_pos = x_pos + document.getElementById("text " + i).getBBox().width + distance;
+                    return text_pos;
                 });
 
             // animation
@@ -546,6 +571,8 @@ function load_barchart(tmp) {
                 yaxis.tickFormat(d3.format(".2s"));
                 svg.selectAll(".y.axis").call(yaxis);
             }
+
+            console.log(parsedata);
 
             // Sortierreihenfolge ändern
             d3.selectAll(".sort").on("click", handleSort);
@@ -641,7 +668,6 @@ jQuery(function ($) {
         $("#chart").empty();
         $("#questions").empty();
         $('#check').prop('checked', true);
-        $('#radio').prop('checked', false);
         $('#selected_category').html($(this).text())
         displayquestions($("#category .active").attr('id'));
     });
@@ -651,7 +677,6 @@ jQuery(function ($) {
         $(this).attr("class", "list-group-item small active");
         $("#chart").empty();
         $('#check').prop('checked', true);
-        $('#radio').prop('checked', false);
         load_barchart($(this).attr("id"));
     });
 
@@ -660,7 +685,6 @@ jQuery(function ($) {
         $(this).attr("class", "btn btn-primary btn-xs");
         $("#chart").empty();
         $('#check').prop('checked', true);
-        $('#radio').prop('checked', false);
         load_barchart($("#questions .active").attr('id'))
     });
 
@@ -669,7 +693,6 @@ jQuery(function ($) {
         $(this).attr("class", "btn btn-primary btn-xs");
         $("#chart").empty();
         $('#check').prop('checked', true);
-        $('#radio').prop('checked', false);
         load_barchart($("#questions .active").attr('id'))
     });
 
@@ -678,10 +701,17 @@ jQuery(function ($) {
         $("#min_age").text(Math.max($(".min-slider-handle").attr("aria-valuenow")));
         $("#chart").empty();
         $('#check').prop('checked', true);
-        $('#radio').prop('checked', false);
         load_barchart($("#questions .active").attr('id'))
-    })
+    });
 
-
+    var resizeId;
+    $(window).resize(function () {
+        clearTimeout(resizeId);
+        resizeId = setTimeout(function () {
+            $("#chart").empty();
+            $('#check').prop('checked', true);
+            load_barchart($("#questions .active").attr('id'))
+        }, 500);
+    });
 
 });
