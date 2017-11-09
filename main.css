@@ -13,6 +13,12 @@ body {
 .container-fluid {
     padding-top: 30px;
 }
+hr.kurz {
+  max-width: 200px;
+}
+hr.lang {
+  max-width: 75%;
+}
 
 
 /*Navbar */
@@ -65,13 +71,28 @@ header {
     margin-bottom: 30px;
 }
 
-.img-impressionen:hover {
+.img-impressionen:hover{
   opacity: .8;
 }
 
-hr.small {
-  max-width: 200px;
+
+/* Angebote */
+.r-angebote {
+    padding: 20px 0 0 0;
 }
+ul.ul-angebote {
+    padding-left: 20x;
+}
+.table-nonfluid {
+   width: auto !important;
+}
+.r-angebote > .col-12:first-child {
+    padding-bottom: 20px;
+}
+.img-angebote:hover {
+    opacity: .8;
+}
+
 
 
 /*Input-Form*/
@@ -86,4 +107,3 @@ hr.small {
 .alert {
     display: none;
 }
-
