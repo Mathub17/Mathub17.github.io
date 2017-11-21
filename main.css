@@ -1,5 +1,5 @@
+/*-----------*/
 /* Allgemein */
-
 html,
 body {
     width: 100%;
@@ -7,7 +7,7 @@ body {
 }
 
 body {
-    font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: Tahoma, Geneva, sans-serif;
     padding-top: 57px;
 }
 
@@ -29,6 +29,35 @@ hr.lang {
 }
 
 
+/*-------------------------------------*/
+/* Formatierungsvorlage für OTTO Marti */
+
+h1 {
+    font-size: 40px;
+}
+
+h2 {
+    letter-spacing: 2px;
+}
+
+h3 {
+    font-style: oblique;
+}
+
+ul {
+    list-style-type: circle;
+}
+
+li {
+    margin-bottom: 9px;
+}
+
+ol {
+    /* nicht verwendet.. */
+}
+
+
+/*-------*/
 /*Navbar */
 
 .navbar {
@@ -41,6 +70,7 @@ hr.lang {
 }
 
 
+/*-------*/
 /* Intro */
 
 header {
@@ -66,16 +96,17 @@ header {
     margin-top: 30px;
 }
 
-.intro-text>a {
+.intro-text a {
     color: inherit;
     text-decoration: none;
 }
 
-.intro-text>a:hover {
+.intro-text a:hover {
     text-shadow: 0px 5px #296772;
 }
 
 
+/*--------------*/
 /* Impressionen */
 
 .impressionen {
@@ -91,6 +122,7 @@ header {
 }
 
 
+/*----------*/
 /* Angebote */
 
 .r-angebote {
@@ -99,15 +131,21 @@ header {
 
 ul.ul-angebote {
     padding-left: 20px;
+    text-align: left;
 }
 
-.table-nonfluid {
+.angebote .table-nonfluid {
     width: auto !important;
     margin-left: auto;
     margin-right: auto;
 }
 
-.r-angebote>.col-12:first-child {
+.angebote .table-nonfluid td,
+.angebote .table-nonfluid th {
+    border: none;
+}
+
+.r-angebote .col-12:first-child {
     padding-bottom: 20px;
 }
 
@@ -116,6 +154,7 @@ ul.ul-angebote {
 }
 
 
+/*----------*/
 /*Input-Form*/
 
 .form-group {
