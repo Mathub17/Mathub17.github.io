@@ -48,10 +48,6 @@ ul {
     list-style-type: circle;
 }
 
-li {
-    margin-bottom: 9px;
-}
-
 ol {
     /* nicht verwendet.. */
 }
@@ -151,6 +147,10 @@ ul.ul-angebote {
 
 .img-angebote:hover {
     opacity: .8;
+}
+
+.ul-angebote li {
+    margin-bottom: 9px;
 }
 
 
